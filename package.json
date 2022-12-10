@@ -1,0 +1,25 @@
+{
+  "name": "create-notes",
+  "version": "1.0.0",
+  "description": "This application is used to take notes for any type of category.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ShafiqueMalik/create-notes.git"
+  },
+  "keywords": [
+    "create",
+    "notes",
+    "notes",
+    "management"
+  ],
+  "author": "Shafique",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShafiqueMalik/create-notes/issues"
+  },
+  "homepage": "https://github.com/ShafiqueMalik/create-notes#readme"
+}
