@@ -2,7 +2,7 @@
   "name": "create-notes",
   "version": "1.0.0",
   "description": "This application is used to take notes for any type of category.",
-  "main": "index.js",
+  "main": "back-end/index.js",
   "scripts": {
     "server": "npm start --prefix back-end",
     "client": "npm start --prefix front-end",
