@@ -3,6 +3,9 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import { InputBase } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchTerm } from 'app/slices/globalSlice';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -13,7 +16,7 @@ const Search = styled('div')(({ theme }) => ({
     },
     marginLeft: 0,
     width: '100%',
-    borderRadius:"100px",
+    borderRadius: "100px",
     [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(1),
         width: 'auto',
@@ -25,8 +28,8 @@ const SearchIconWrapper = styled(Box)(({ theme }) => ({
     height: '100%',
     position: 'absolute',
     pointerEvents: 'none',
-    top:"2px",
-    left:"-5px",
+    top: "2px",
+    left: "-5px",
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -51,12 +54,27 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 
 const SearchInput = () => {
+    const dispatch = useDispatch();
+
+    function debounce(func, timeout = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    }
+
+    const handleChange = debounce((e) => {
+       dispatch(setSearchTerm(e.target.value));
+    });
+
     return (
         <Search sx={{ height: "auto", alignItems: "center", my: "auto" }}>
             <SearchIconWrapper>
                 <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
+                onChange={handleChange}
                 placeholder="Search…"
                 inputProps={{ 'aria-label': 'search' }}
             />

@@ -7,6 +7,11 @@ import Home from 'Pages/Home/Home';
 import About from 'Pages/About/About';
 import Notes from 'Pages/Notes/Notes';
 import CreateNote from 'Pages/CreateNote/CreateNote';
+import Login from 'Pages/Login/Login';
+import Register from 'Pages/Register/Register';
+import ProtectedRoute from 'components/ProtectedRoute/ProtectedRoute';
+import EditNote from 'Pages/EditNote/EditNote';
+import UserProfilePage from 'Pages/UserProfilePage/UserProfilePage';
 function App() {
   return (
     <>
@@ -15,15 +20,18 @@ function App() {
         <Box className="app">
           <Navbar />
           <Box component="main" sx={{
-            height: "calc(100vh - 64px)",
+            minHeight: "calc(100vh - 64px)",
             mt: "64px"
           }}>
            
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/notes" element={<Notes />} />
-                <Route path="/create-note" element={<CreateNote />} />
-                <Route path="/about" element={<About />} />
+                <Route path="/" element={<Home/>} />
+                <Route path="/notes" element={<ProtectedRoute Component={Notes} />} />
+                <Route path="/notes/create-note" element={<ProtectedRoute Component={CreateNote} />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/notes/edit/:id" element={<EditNote />} />
+                <Route path="/profile" element={<ProtectedRoute Component={UserProfilePage} />} />
               </Routes>
            </Box>
           <Footer />

@@ -11,17 +11,12 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
-import Logout from '@mui/icons-material/Logout';
-import SearchIcon from '@mui/icons-material/Search';
 
 import { Container, Tooltip, IconButton, Avatar, Menu, MenuItem, InputBase } from '@mui/material';
-import { Link, NavLink } from 'react-router-dom';
-import { styled, alpha } from '@mui/material/styles';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import SearchInput from './SearchInput';
+import { useDispatch, useSelector } from 'react-redux';
+import UserProfilePhotoMenu from './UserProfilePhotoMenu';
 
 const drawerWidth = 240;
 const navItemsData = [{
@@ -29,22 +24,26 @@ const navItemsData = [{
     route: "notes"
 }];
 
-function DrawerAppBar(props) {
+function Navbar(props) {
     const { window } = props;
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { loggedInUser } = useSelector((state) => state.global);
+    const [user, setUser] = React.useState(null);
+
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
+    React.useEffect(() => {
+        if (loggedInUser) {
+            setUser(loggedInUser)
+        } else {
+            setUser(null)
+        }
+    }, [loggedInUser]);
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ my: 2 }}>
@@ -69,7 +68,7 @@ function DrawerAppBar(props) {
         <Box sx={{ display: 'flex' }} component="header">
             <AppBar component="nav" position='fixed'>
                 <Container maxWidth="lg">
-                    <Toolbar sx={{ alignItems: "stretch",px:"0 !important" }}>
+                    <Toolbar sx={{ alignItems: "stretch", px: "0 !important" }}>
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"
@@ -85,84 +84,88 @@ function DrawerAppBar(props) {
                             to="/"
                             color="inherit"
                             sx={{
-                                flexGrow: 1, fontFamily: "cursive",
-                                textDecoration:"none",
+                                mr: "auto",
+                                fontFamily: "cursive",
+                                textDecoration: "none",
                                 display: { xs: 'none', sm: 'flex', alignItems: "center" }
                             }}
                         >
                             CREATE(NOTES)
                         </Typography>
-                       <SearchInput/>
-                        <Box sx={{
-                            display: {
-                                xs: 'none', sm: 'flex', alignItems: "center", gap: "20px",
-                                alignItems: "stretch"
-                            }
-                        }}>
-                            {navItemsData.map((item) => (
-                                <Box component={NavLink} to={`/${item.route}`} key={item.text}
-                                    sx={{ color: '#fff', px: 1, display: "flex", alignItems: "center", textDecoration: "none" }}>
-                                    {item.text}
+                        {user && (
+                            <>
+                                <SearchInput />
+                                <Box sx={{
+                                    display: {
+                                        xs: 'none', sm: 'flex', alignItems: "center", gap: "20px",
+                                        alignItems: "stretch"
+                                    }
+                                }}>
+                                    {navItemsData.map((item) => (
+                                        <Box component={NavLink} to={`/${item.route}`} key={item.text}
+                                            sx={{
+                                                position: "relative",
+                                                color: '#fff', px: 1, display: "flex",
+                                                alignItems: "center", textDecoration: "none",
+                                                "&.active::after": {
+                                                    content: '""',
+                                                    display: "block",
+                                                    width: "100%",
+                                                    height: "4px",
+                                                    backgroundColor: "red",
+                                                    position: "absolute",
+                                                    bottom: 0,
+                                                    left: 0,
+                                                }
+                                            }}>
+                                            {item.text}
+                                        </Box>
+                                    ))}
                                 </Box>
-                            ))}
-                        </Box>
-                        <Tooltip title="Account settings">
-                            <IconButton
-                                onClick={handleClick}
-                                size="small"
-                                sx={{ ml: 2, my: "auto" }}
-                                aria-controls={open ? 'account-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open ? 'true' : undefined}
-                            >
-                                <Avatar sx={{ width: 32, height: 32 }}>S</Avatar>
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            anchorEl={anchorEl}
-                            id="account-menu"
-                            open={open}
-                            onClose={handleClose}
-                            onClick={handleClose}
-                            PaperProps={{
-                                elevation: 0,
-                                sx: {
-                                    overflow: 'visible',
-                                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                                    mt: 1.5,
-                                    '& .MuiAvatar-root': {
-                                        width: 32,
-                                        height: 32,
-                                        ml: -0.5,
-                                        mr: 1,
-                                    },
-                                    '&:before': {
-                                        content: '""',
-                                        display: 'block',
-                                        position: 'absolute',
-                                        top: 0,
-                                        right: 14,
-                                        width: 10,
-                                        height: 10,
-                                        bgcolor: 'background.paper',
-                                        transform: 'translateY(-50%) rotate(45deg)',
-                                        zIndex: 0,
-                                    },
-                                },
-                            }}
-                            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                        >
-                            <MenuItem>
-                                <Avatar /> Profile
-                            </MenuItem>
-                            <MenuItem>
-                                <ListItemIcon>
-                                    <Logout fontSize="small" />
-                                </ListItemIcon>
-                                Logout
-                            </MenuItem>
-                        </Menu>
+                            </>
+                        )}
+
+                        {user ? (<UserProfilePhotoMenu user={user} />) : (
+                            <>
+                                <Box component={NavLink} to={`/register`}
+                                    sx={{
+                                        position: "relative",
+                                        color: '#fff', px: 1, display: "flex",
+                                        alignItems: "center", textDecoration: "none",
+                                        ml: 2,
+                                        "&.active::after": {
+                                            content: '""',
+                                            display: "block",
+                                            width: "100%",
+                                            height: "4px",
+                                            backgroundColor: "red",
+                                            position: "absolute",
+                                            bottom: 0,
+                                            left: 0,
+                                        }
+                                    }}>
+                                    Signup
+                                </Box>
+                                <Box component={NavLink} to={`/login`}
+                                    sx={{
+                                        position: "relative",
+                                        color: '#fff', px: 1, display: "flex",
+                                        alignItems: "center", textDecoration: "none",
+                                        "&.active::after": {
+                                            content: '""',
+                                            display: "block",
+                                            width: "100%",
+                                            height: "4px",
+                                            backgroundColor: "red",
+                                            position: "absolute",
+                                            bottom: 0,
+                                            left: 0,
+                                        }
+                                    }}>
+                                    Login
+                                </Box>
+                            </>
+                        )}
                     </Toolbar>
                 </Container>
             </AppBar>
@@ -187,7 +190,7 @@ function DrawerAppBar(props) {
     );
 }
 
-DrawerAppBar.propTypes = {
+Navbar.propTypes = {
     /**
      * Injected by the documentation to work in an iframe.
      * You won't need it on your project.
@@ -195,4 +198,4 @@ DrawerAppBar.propTypes = {
     window: PropTypes.func,
 };
 
-export default DrawerAppBar;
+export default Navbar;

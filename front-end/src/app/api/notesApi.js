@@ -6,13 +6,13 @@ export const notesApi = createApi({
   reducerPath: 'notesApi',
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
-    // prepareHeaders: (headers, { getState }) => {
-    //   const token =   JSON.parse(localStorage.getItem("user"))?.JWT;
-    //   if (token) {
-    //     headers.set('X-Authorization', `Bearer ${token}`)
-    //   }
-    //   return headers
-    // },
+    prepareHeaders: (headers, { getState }) => {
+      const token =   JSON.parse(localStorage.getItem("user"))?.token;
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`)
+      }
+      return headers
+    },
   }),
   tagTypes: ['notes'],
   endpoints: (builder) => ({
@@ -24,11 +24,33 @@ export const notesApi = createApi({
       // transformResponse: (response, meta, arg) => response?.user?.[0],
       providesTags: ['notes'],
     }),
-    updateUser: builder.mutation({
+    createNote: builder.mutation({
       query: ({id,...data}) => ({
-        url: `/edit/user/${id}`,
+        url: `/api/notes/create`,
         method: 'POST',
         body: data
+      }),
+      invalidatesTags: ['notes'],
+    }),
+    getNoteById: builder.query({
+      query: (id) => ({
+        url: `/api/notes/${id}`,
+        method: 'GET'
+      }),
+      keepUnusedDataFor: 1,
+    }),
+    updateNote: builder.mutation({
+      query: ({id,...data}) => ({
+        url: `/api/notes/${id}`,
+        method: 'PUT',
+        body: data
+      }),
+      invalidatesTags: ['notes'],
+    }),
+    deleteNote: builder.mutation({
+      query: (id) => ({
+        url: `/api/notes/${id}`,
+        method: 'DELETE'
       }),
       invalidatesTags: ['notes'],
     }),
@@ -37,4 +59,6 @@ export const notesApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetNotesQuery, useUpdateUserMutation } = notesApi
+export const { useGetNotesQuery, useCreateNoteMutation, useUpdateNoteMutation,useGetNoteByIdQuery,
+useDeleteNoteMutation
+} = notesApi
